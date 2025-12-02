@@ -120,7 +120,7 @@ projects ~> cd ~/projects
 
 ## How it works
 
-- **Alias storage**: Aliases are stored in `aliases.json` in the current directory (or where the binary is run)
+- **Alias storage**: Aliases are stored in `~/.config/ga/aliases.json` (centralized location, created automatically)
 - **Command execution**: Commands are executed in an interactive shell, ensuring your shell configuration (like nvm, etc.) is loaded
 - **Directory changes**: When executing `cd` commands, the program changes to the directory and spawns a new shell session in that location
 - **Shell compatibility**: Works with zsh, bash, and other Unix shells
@@ -130,11 +130,13 @@ projects ~> cd ~/projects
 ```
 ga/
 ├── Cargo.toml          # Rust project configuration
-├── src/
-│   ├── main.rs        # Main application logic
-│   ├── cli.rs         # CLI argument parsing
-│   └── alias.rs       # Alias data structures
-└── aliases.json       # Stored aliases (created automatically)
+└── src/
+    ├── main.rs        # Main application logic
+    ├── cli.rs         # CLI argument parsing
+    └── alias.rs       # Alias data structures
+
+# Config file location (created automatically)
+~/.config/ga/aliases.json
 ```
 
 ## Requirements
@@ -155,6 +157,4 @@ If you get errors like "command not found: nvm_find_nvmrc" when using `cd` comma
 
 ### Aliases not persisting
 
-Make sure the `aliases.json` file is writable and in the directory where you're running the command.
-
-
+Make sure the `~/.config/ga/` directory is writable. The config file is stored at `~/.config/ga/aliases.json` and is created automatically on first use.

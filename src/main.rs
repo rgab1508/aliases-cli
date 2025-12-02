@@ -6,23 +6,39 @@ use std::io;
 use std::os::unix::process::CommandExt;
 use std::process::Command;
 
-use std::{collections::HashMap, error::Error, fs};
+use std::{collections::HashMap, error::Error, fs, path::PathBuf};
 
 use alias::Aliases;
 use clap::Parser;
 use cli::Cli;
 
-const FILE_PATH: &str = "aliases.json";
+fn get_aliases_file_path() -> Result<PathBuf, Box<dyn Error>> {
+    let home = env::var("HOME")?;
+    let config_dir = PathBuf::from(home).join(".config").join("ga");
+
+    fs::create_dir_all(&config_dir)?;
+
+    Ok(config_dir.join("aliases.json"))
+}
 
 fn load_aliases() -> Result<Aliases, Box<dyn Error>> {
-    let contents = fs::read_to_string(FILE_PATH)?;
+    let file_path = get_aliases_file_path()?;
+
+    if !file_path.exists() {
+        return Ok(Aliases {
+            aliases: HashMap::new(),
+        });
+    }
+
+    let contents = fs::read_to_string(&file_path)?;
     let aliases = serde_json::from_str(&contents)?;
     Ok(aliases)
 }
 
 fn save_aliases(aliases: &Aliases) -> Result<(), Box<dyn Error>> {
+    let file_path = get_aliases_file_path()?;
     let json_aliases = serde_json::to_string_pretty(aliases)?;
-    fs::write(FILE_PATH, json_aliases)?;
+    fs::write(&file_path, json_aliases)?;
     Ok(())
 }
 
